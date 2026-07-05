@@ -18,9 +18,9 @@ enum ColorEnum : unsigned char {
 // 作用域枚举型可以避免命名空间污染，并提供类型安全保证。
 enum class Color : int {
     Red = COLOR_RED,
-    Green,
-    Yellow,
-    Blue,
+    Green = COLOR_GREEN,
+    Yellow = COLOR_YELLOW,
+    Blue = COLOR_BLUE,
 };
 
 ColorEnum convert_by_pun(Color c) {
@@ -37,6 +37,7 @@ ColorEnum convert_by_pun(Color c) {
 
     TypePun pun;
     // TODO: 补全类型双关转换
+    pun.c = c;
 
     return pun.e;
 }

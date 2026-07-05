@@ -23,14 +23,17 @@ public:
 
 using Unique = std::unique_ptr<Resource>;
 Unique reset(Unique ptr) {
+    // 旧对象返回时被析构，返回新对象
     if (ptr) ptr->record('r');
     return std::make_unique<Resource>();
 }
 Unique drop(Unique ptr) {
+    // 传入对象返回时被析构
     if (ptr) ptr->record('d');
     return nullptr;
 }
 Unique forward(Unique ptr) {
+    // 转移所有权
     if (ptr) ptr->record('f');
     return ptr;
 }
@@ -38,13 +41,13 @@ Unique forward(Unique ptr) {
 int main(int argc, char **argv) {
     std::vector<std::string> problems[3];
 
-    drop(forward(reset(nullptr)));
+    drop(forward(reset(nullptr)));  // fd
     problems[0] = std::move(RECORDS);
 
-    forward(drop(reset(forward(forward(reset(nullptr))))));
+    forward(drop(reset(forward(forward(reset(nullptr)))))); // ffr d
     problems[1] = std::move(RECORDS);
 
-    drop(drop(reset(drop(reset(reset(nullptr))))));
+    drop(drop(reset(drop(reset(reset(nullptr)))))); // r d d
     problems[2] = std::move(RECORDS);
 
     // ---- 不要修改以上代码 ----
@@ -53,8 +56,8 @@ int main(int argc, char **argv) {
         {"fd"},
         // TODO: 分析 problems[1] 中资源的生命周期，将记录填入 `std::vector`
         // NOTICE: 此题结果依赖对象析构逻辑，平台相关，提交时以 CI 实际运行平台为准
-        {"", "", "", "", "", "", "", ""},
-        {"", "", "", "", "", "", "", ""},
+        {"d", "ffr"},
+        {"d", "d", "r"},
     };
 
     // ---- 不要修改以下代码 ----
